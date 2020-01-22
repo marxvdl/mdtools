@@ -2,9 +2,9 @@ Copyright (C) 2010-2020, Marx Gomes van der Linden
 
 # MDTools 1.1
 
-MDTools was developed mainly as a tool to generate input files for HmmPred (see references), but some of its features can be useful to accomplish more general tasks when working with protein structure PDB files. 
+MDTools was developed mainly as a tool to generate input files for HmmPred (see references), but some of its features can be useful to accomplish more general tasks when working with protein structure files in the PDB format. 
 
-In particular, MDTools it can be used to generate correct amino acid sequences from PDB files. If there are gaps in the original structure, those gaps will be represented by the appropriate number of Xs in the generated sequence.
+In particular, MDTools it can be used to generate correct amino acid sequences or burial sequences from PDB files. If there are gaps in the original structure, those gaps will be represented by the appropriate number of Xs in the generated sequence.
 
 ## Prerequisites
 
