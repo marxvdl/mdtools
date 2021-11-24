@@ -1211,7 +1211,7 @@ inline string Protein::addRamaLine(ostream& output, vector< map<string,uint> >& 
 	if(!atomMap[z].count(a3)) throw a3 + " not found in residue " + int2string(z+1);
 	if(!atomMap[k].count(a4)) throw a4 + " not found in residue " + int2string(k+1);
 	
-	char* tmp = new char(15);
+	char* tmp = new char[16];
 	sprintf(tmp, "%3d %3d %3d %3d", 
 		atoms[ atomMap[x][a1] ].index , 
 		atoms[ atomMap[y][a2] ].index , 
