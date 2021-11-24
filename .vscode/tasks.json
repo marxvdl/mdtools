@@ -1,0 +1,30 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++ arquivo de build ativo (MDTools)",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "${fileDirname}/ClashFinder.cpp",
+                "${fileDirname}/DatFile.cpp",
+                "${fileDirname}/rcntr.cpp",
+                "${fileDirname}/Protein.cpp",
+                "${fileDirname}/MDTools.cpp",
+                "${fileDirname}/Atom.cpp",
+                "-lboost_program_options",
+                "-oMDTools_db"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Tarefa gerada pelo Depurador."
+        }
+    ],
+    "version": "2.0.0"
+}
