@@ -571,56 +571,83 @@ bool atomComparator (Atom a, Atom b) {
 	return a.distanceToCenter < b.distanceToCenter;
 }
 
-void Protein::calculateLayerInfo(int layers){
-	vector<Atom> sortedAtoms = atoms;
-	sort(sortedAtoms.begin(), sortedAtoms.end(), atomComparator);
-
+void Protein::calculateLayerInfo(int layers){	
 	layerBoundaries.resize(layers+1);
 
 	//
 	// 1. Calculate the boundaries between different layers
 	//
-	
-	//default: each layer has the same number of atoms
-	if(midLayerWidth == -1){
+
+	// 1.1. Splitting by residue
+	// (each layer has the same number of CA atoms)
+	if(splitLayersByRes){
+
+		//filter CA atoms
+		vector<Atom> caAtoms;		
+		copy_if(
+			atoms.begin(), 
+			atoms.end(), 
+			back_inserter(caAtoms), 
+			[](Atom a){
+				return a.type == "CA";
+			} 
+		);
+
+		sort(caAtoms.begin(), caAtoms.end(), atomComparator);
 		layerBoundaries[0] = 0;
-		real layerSize = (real)sortedAtoms.size() / (real)layers;
+		real layerSize = (real)caAtoms.size() / (real)layers;
 		for(int i=1; i<layers; i++){
-			layerBoundaries[i] = sortedAtoms[(int)(i*layerSize)].distanceToCenter;
+			layerBoundaries[i] = caAtoms[(int)(i*layerSize)].distanceToCenter;
 		}
-		layerBoundaries[layers] = sortedAtoms[sortedAtoms.size() - 1].distanceToCenter;
+		layerBoundaries[layers] = caAtoms[caAtoms.size() - 1].distanceToCenter;
 	}
-	
-	//special case: mid layer width specified by user
-	else{
-		if(layers != 3)
-			throw "mid-layer-size only makes sense with 3 layers!";
-					
-		real layer1Size;
-		real layer0Size;
-		real layer2Size;		
-		
-		//varying only middle layer (by proportion to original mid-layer width)
-		if(bottomLayerWidth == -1){
+
+	// 1.2. Splitting by other criteria
+	else{	
+		vector<Atom> sortedAtoms = atoms;
+		sort(sortedAtoms.begin(), sortedAtoms.end(), atomComparator);
+
+		//default: each layer has the same number of atoms
+		if(midLayerWidth == -1){
+			layerBoundaries[0] = 0;
 			real layerSize = (real)sortedAtoms.size() / (real)layers;
-			
-			layer1Size = layerSize * midLayerWidth;
-			layer0Size = ((real)sortedAtoms.size() - layer1Size) / 2.0;
-			layer2Size = layer0Size;			
+			for(int i=1; i<layers; i++){
+				layerBoundaries[i] = sortedAtoms[(int)(i*layerSize)].distanceToCenter;
+			}
+			layerBoundaries[layers] = sortedAtoms[sortedAtoms.size() - 1].distanceToCenter;
 		}
 		
-		//varying middle and bottom layer (by proportion with total width)
+		//special case: mid layer width specified by user
 		else{
-			real totalSize = (real)sortedAtoms.size();
+			if(layers != 3)
+				throw "mid-layer-size only makes sense with 3 layers!";
+						
+			real layer1Size;
+			real layer0Size;
+			real layer2Size;		
 			
-			layer0Size = bottomLayerWidth * totalSize;
-			layer1Size = midLayerWidth * totalSize;
-			layer2Size = totalSize - layer0Size - layer1Size;		
+			//varying only middle layer (by proportion to original mid-layer width)
+			if(bottomLayerWidth == -1){
+				real layerSize = (real)sortedAtoms.size() / (real)layers;
+				
+				layer1Size = layerSize * midLayerWidth;
+				layer0Size = ((real)sortedAtoms.size() - layer1Size) / 2.0;
+				layer2Size = layer0Size;			
+			}
+			
+			//varying middle and bottom layer (by proportion with total width)
+			else{
+				real totalSize = (real)sortedAtoms.size();
+				
+				layer0Size = bottomLayerWidth * totalSize;
+				layer1Size = midLayerWidth * totalSize;
+				layer2Size = totalSize - layer0Size - layer1Size;		
+			}
+			
+			layerBoundaries[1] = sortedAtoms[(int)  layer0Size               ].distanceToCenter;
+			layerBoundaries[2] = sortedAtoms[(int) (layer0Size + layer1Size) ].distanceToCenter;
+			layerBoundaries[3] = sortedAtoms[       sortedAtoms.size() - 1   ].distanceToCenter;
 		}
-		
-		layerBoundaries[1] = sortedAtoms[(int)  layer0Size               ].distanceToCenter;
-		layerBoundaries[2] = sortedAtoms[(int) (layer0Size + layer1Size) ].distanceToCenter;
-		layerBoundaries[3] = sortedAtoms[       sortedAtoms.size() - 1   ].distanceToCenter;
 	}
 
 	//

@@ -78,6 +78,7 @@ int main(int argc, char **argv) {
 	    ("mid-layer-width,w", po::value<real>  (&midLayerWidth)    -> default_value(-1)        )
 	    ("bot-layer-width,y", po::value<real>  (&bottomLayerWidth) -> default_value(-1)        )
 	    ("quadratic,q", "")
+		("layers-by-res,b", "")
 	;
 
 	p.add("operation", 1);
@@ -96,6 +97,7 @@ int main(int argc, char **argv) {
 
 	bool normalize = vm.count("normalize");
 	bool quadratic = vm.count("quadratic");
+	bool layersByRes = vm.count("layers-by-res");
 
 	Operation operation;
 	string opstring = vm["operation"].as<string>();
@@ -137,7 +139,7 @@ int main(int argc, char **argv) {
 	//
 	// 2. Invoke appropriate tool
 	//
-	Protein protein(vm.count("keep-center"), midLayerWidth, bottomLayerWidth);
+	Protein protein(vm.count("keep-center"), midLayerWidth, bottomLayerWidth, layersByRes);
 	if(inputFormat == ""){
 		if(operation == SEQ)
 			inputFormat = "rg5";
@@ -441,6 +443,10 @@ void usage(po::options_description& desc){
 	     << "                                     burial is to be calculated.\n"
 	     << "                                     (default: CA)\n"
 	     << "                                     (special values: all, CAdir)\n"
+		 << "\n"
+		 << "               -b, --layers-by-res   Split layers such that each layer has the same\n"
+		 << "                                     number of CA atoms (instead of the same number\n"
+		 << "                                     of any atoms).\n"
 	     << "\n"
 	     << "  hgram  -> Plots a burial histogram.\n"
 	     << "            Options:\n"
