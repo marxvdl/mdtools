@@ -563,7 +563,7 @@ int Protein::getLayerNumberFromBurial(real burial){
 		if(burial <= layerBoundaries[i])
 			return i-1;
 	}
-	return -1;
+	return layerBoundaries.size()-2;
 }
 
 
