@@ -40,6 +40,7 @@ private:
 	real bottomLayerWidth;
 	//end
 
+	bool joinInternalLayers;
 	bool splitLayersByRes;	
 	bool keepCenterAtOrigin;
 	real centerX, centerY, centerZ;
@@ -101,11 +102,12 @@ public:
 	string toHPNhp();
 	string toHPNhpn();
 	
-	Protein(bool k, real mlwidth, real bwwidth, bool layersByRes) : 
+	Protein(bool k, real mlwidth, real bwwidth, bool layersByRes, bool joinLayers) : 
 		keepCenterAtOrigin(k), 
 		midLayerWidth(mlwidth),
 		bottomLayerWidth(bwwidth),
-		splitLayersByRes(layersByRes)
+		splitLayersByRes(layersByRes),
+		joinInternalLayers(joinLayers)
 		{}
 	
 };

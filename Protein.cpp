@@ -650,8 +650,15 @@ void Protein::calculateLayerInfo(int layers){
 		}
 	}
 
+	// 2. Join internal layers (resulting in 3 total layers)
+	if(this->joinInternalLayers){
+		layerBoundaries[2] = layerBoundaries[ layerBoundaries.size() -2 ];
+		layerBoundaries[3] = layerBoundaries[ layerBoundaries.size() -1 ];
+		layerBoundaries.resize(4);
+	}
+
 	//
-	// 2. Use the boundaries to calculate distances and deltas
+	// 3. Use the boundaries to calculate distances and deltas
 	//
 	layerDistances.resize(layers);
 	layerDeltas.resize(layers);

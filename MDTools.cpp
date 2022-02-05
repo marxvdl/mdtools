@@ -79,6 +79,7 @@ int main(int argc, char **argv) {
 	    ("bot-layer-width,y", po::value<real>  (&bottomLayerWidth) -> default_value(-1)        )
 	    ("quadratic,q", "")
 		("layers-by-res,b", "")
+		("join-internal,j", "")
 	;
 
 	p.add("operation", 1);
@@ -98,6 +99,7 @@ int main(int argc, char **argv) {
 	bool normalize = vm.count("normalize");
 	bool quadratic = vm.count("quadratic");
 	bool layersByRes = vm.count("layers-by-res");
+	bool joinInternal = vm.count("join-internal");
 
 	Operation operation;
 	string opstring = vm["operation"].as<string>();
@@ -139,7 +141,7 @@ int main(int argc, char **argv) {
 	//
 	// 2. Invoke appropriate tool
 	//
-	Protein protein(vm.count("keep-center"), midLayerWidth, bottomLayerWidth, layersByRes);
+	Protein protein(vm.count("keep-center"), midLayerWidth, bottomLayerWidth, layersByRes, joinInternal);
 	if(inputFormat == ""){
 		if(operation == SEQ)
 			inputFormat = "rg5";
@@ -393,6 +395,8 @@ void usage(po::options_description& desc){
 		 << "               -b, --layers-by-res   Split layers such that each layer has the same\n"
 		 << "                                     number of CA atoms (instead of the same number\n"
 		 << "                                     of any atoms).\n"
+		 << "\n"
+		 << "               -j, --join-internal   Join internal layers into a single layer.\n"
 		 << "\n"
 	     << "  gar    -> Generates the \".gar\" file with the residue burial info formatted\n"
 	     << "            as burial restraints for GAPF.\n"
