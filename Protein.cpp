@@ -597,7 +597,9 @@ void Protein::calculateLayerInfo(int layers){
 		layerBoundaries[0] = 0;
 		real layerSize = (real)caAtoms.size() / (real)layers;
 		for(int i=1; i<layers; i++){
-			layerBoundaries[i] = caAtoms[(int)(i*layerSize)].distanceToCenter;
+			int thisCA = (int)(i*layerSize);
+			int nextCA = thisCA + 1;
+			layerBoundaries[i] = ( caAtoms[thisCA].distanceToCenter + caAtoms[nextCA].distanceToCenter ) / 2.0;
 		}
 		layerBoundaries[layers] = caAtoms[caAtoms.size() - 1].distanceToCenter;
 	}
