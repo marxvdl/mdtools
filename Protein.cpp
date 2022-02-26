@@ -601,7 +601,8 @@ void Protein::calculateLayerInfo(int layers){
 			int nextCA = thisCA + 1;
 			layerBoundaries[i] = ( caAtoms[thisCA].distanceToCenter + caAtoms[nextCA].distanceToCenter ) / 2.0;
 		}
-		layerBoundaries[layers] = caAtoms[caAtoms.size() - 1].distanceToCenter;
+		Atom outerAtom = *max_element(atoms.begin(), atoms.end(), atomComparator);
+		layerBoundaries[layers] = outerAtom.distanceToCenter;
 	}
 
 	// 1.2. Splitting by other criteria
