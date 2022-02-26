@@ -653,11 +653,17 @@ void Protein::calculateLayerInfo(int layers){
 		}
 	}
 
-	// 2. Join internal layers (resulting in 3 total layers)
+	// 2. Join internal layers, resulting in an optimized (lower) number of total layers
 	if(this->joinInternalLayers){
-		layerBoundaries[2] = layerBoundaries[ layerBoundaries.size() -2 ];
-		layerBoundaries[3] = layerBoundaries[ layerBoundaries.size() -1 ];
-		layerBoundaries.resize(4);
+
+		if(layers % 2)
+			throw "Optimized layers can only be used with an even number of layers";
+
+		for(int toDelete=2; toDelete<layerBoundaries.size()-1; toDelete += 2){
+			layerBoundaries[toDelete] = -999;
+		}
+
+	layerBoundaries.erase( remove (layerBoundaries.begin(), layerBoundaries.end(), -999), layerBoundaries.end() );
 	}
 
 	//

@@ -396,7 +396,7 @@ void usage(po::options_description& desc){
 		 << "                                     number of CA atoms (instead of the same number\n"
 		 << "                                     of any atoms).\n"
 		 << "\n"
-		 << "               -j, --join-internal   Join internal layers into a single layer.\n"
+		 << "               -j, --join-internal   Optimize layers by joining pairs of internal layers.\n"
 		 << "\n"
 	     << "  gar    -> Generates the \".gar\" file with the residue burial info formatted\n"
 	     << "            as burial restraints for GAPF.\n"
