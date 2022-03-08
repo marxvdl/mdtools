@@ -654,17 +654,33 @@ void Protein::calculateLayerInfo(int layers){
 	}
 
 	// 2. Join internal layers, resulting in an optimized (lower) number of total layers
-	if(this->joinInternalLayers){
+	// (v1)
+	if(this->joinInternalLayers == 1){
 
 		if(layers % 2)
-			throw "Optimized layers can only be used with an even number of layers";
+			throw "Optimized layers (v1) can only be used with an even number of layers";
 
 		for(int toDelete=2; toDelete<layerBoundaries.size()-1; toDelete += 2){
 			layerBoundaries[toDelete] = -999;
 		}
 
-	layerBoundaries.erase( remove (layerBoundaries.begin(), layerBoundaries.end(), -999), layerBoundaries.end() );
+		layerBoundaries.erase( remove (layerBoundaries.begin(), layerBoundaries.end(), -999), layerBoundaries.end() );
 	}
+	// (v2)
+	else if(this->joinInternalLayers == 2){
+		if((layers < 7 ) || ((layers - 7) % 3))
+			throw "Optimized layers (v2) can only be used with 7, 10, 13, 16... layers";
+
+		layerBoundaries[1] = -999;
+		for(int toDelete=3; toDelete<=layerBoundaries.size()-5; toDelete += 3){
+			layerBoundaries[toDelete] = -999;
+			layerBoundaries[toDelete+1] = -999;
+		}
+		layerBoundaries[layerBoundaries.size() -2] = -999;
+
+		layerBoundaries.erase( remove (layerBoundaries.begin(), layerBoundaries.end(), -999), layerBoundaries.end() );
+	}
+
 
 	//
 	// 3. Use the boundaries to calculate distances and deltas

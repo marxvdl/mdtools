@@ -56,6 +56,7 @@ int main(int argc, char **argv) {
 	real scale;
 	real midLayerWidth;
 	real bottomLayerWidth;
+	int joinInternal;
 
 	po::positional_options_description p;
 	po::options_description desc("");
@@ -79,7 +80,7 @@ int main(int argc, char **argv) {
 	    ("bot-layer-width,y", po::value<real>  (&bottomLayerWidth) -> default_value(-1)        )
 	    ("quadratic,q", "")
 		("layers-by-res,b", "")
-		("join-internal,j", "")
+		("join-internal,j",   po::value<int>   (&joinInternal)     -> default_value(0)         )
 	;
 
 	p.add("operation", 1);
@@ -99,7 +100,6 @@ int main(int argc, char **argv) {
 	bool normalize = vm.count("normalize");
 	bool quadratic = vm.count("quadratic");
 	bool layersByRes = vm.count("layers-by-res");
-	bool joinInternal = vm.count("join-internal");
 
 	Operation operation;
 	string opstring = vm["operation"].as<string>();
@@ -396,7 +396,9 @@ void usage(po::options_description& desc){
 		 << "                                     number of CA atoms (instead of the same number\n"
 		 << "                                     of any atoms).\n"
 		 << "\n"
-		 << "               -j, --join-internal   Optimize layers by joining pairs of internal layers.\n"
+		 << "               -j, --join-internal=N Optimize layers by joining pairs of internal layers.\n"
+		 << "                                     N=1: first version  (e.g.: 121, 1221, ...)\n"
+		 << "                                     N=2: second version (e.g.: 232, 2332, ...)\n"
 		 << "\n"
 	     << "  gar    -> Generates the \".gar\" file with the residue burial info formatted\n"
 	     << "            as burial restraints for GAPF.\n"
