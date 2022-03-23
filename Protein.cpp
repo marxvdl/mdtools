@@ -680,6 +680,7 @@ void Protein::calculateLayerInfo(int layers){
 
 		layerBoundaries.erase( remove (layerBoundaries.begin(), layerBoundaries.end(), -999), layerBoundaries.end() );
 	}
+	// (v3, custom boundaries) is dealt with in rcntr.cpp
 
 
 	//

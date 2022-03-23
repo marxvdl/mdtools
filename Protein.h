@@ -40,10 +40,11 @@ private:
 	real bottomLayerWidth;
 	//end
 
-	bool joinInternalLayers;
+	int joinInternalLayers;
 	bool splitLayersByRes;	
 	bool keepCenterAtOrigin;
 	real centerX, centerY, centerZ;
+	string customLimits;
 
 	vector<real> layerBoundaries;
 	vector<real> layerDistances;
@@ -102,12 +103,13 @@ public:
 	string toHPNhp();
 	string toHPNhpn();
 	
-	Protein(bool k, real mlwidth, real bwwidth, bool layersByRes, bool joinLayers) : 
+	Protein(bool k, real mlwidth, real bwwidth, bool layersByRes, int joinLayers, string cstmLimits) : 
 		keepCenterAtOrigin(k), 
 		midLayerWidth(mlwidth),
 		bottomLayerWidth(bwwidth),
 		splitLayersByRes(layersByRes),
-		joinInternalLayers(joinLayers)
+		joinInternalLayers(joinLayers),
+		customLimits(cstmLimits)
 		{}
 	
 };

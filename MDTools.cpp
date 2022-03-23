@@ -57,6 +57,7 @@ int main(int argc, char **argv) {
 	real midLayerWidth;
 	real bottomLayerWidth;
 	int joinInternal;
+	string customLimits;
 
 	po::positional_options_description p;
 	po::options_description desc("");
@@ -81,6 +82,7 @@ int main(int argc, char **argv) {
 	    ("quadratic,q", "")
 		("layers-by-res,b", "")
 		("join-internal,j",   po::value<int>   (&joinInternal)     -> default_value(0)         )
+		("custom-limits,u",   po::value<string>(&customLimits)     -> default_value("")        )
 	;
 
 	p.add("operation", 1);
@@ -141,7 +143,7 @@ int main(int argc, char **argv) {
 	//
 	// 2. Invoke appropriate tool
 	//
-	Protein protein(vm.count("keep-center"), midLayerWidth, bottomLayerWidth, layersByRes, joinInternal);
+	Protein protein(vm.count("keep-center"), midLayerWidth, bottomLayerWidth, layersByRes, joinInternal, customLimits);
 	if(inputFormat == ""){
 		if(operation == SEQ)
 			inputFormat = "rg5";
@@ -399,6 +401,11 @@ void usage(po::options_description& desc){
 		 << "               -j, --join-internal=N Optimize layers by joining pairs of internal layers.\n"
 		 << "                                     N=1: first version  (e.g.: 121, 1221, ...)\n"
 		 << "                                     N=2: second version (e.g.: 232, 2332, ...)\n"
+		 << "                                     N=3: custom limits (specified with --custom-limits)\n"
+		 << "\n"
+		 << "               -u, --custom-limits=LIMITS  Specify the limits used to describe each layer.\n"
+		 << "                                           Should be used with --join-internal=3\n"
+		 << "                                           Example: --custom-limits=8.90,12.45,15.10\n"
 		 << "\n"
 	     << "  gar    -> Generates the \".gar\" file with the residue burial info formatted\n"
 	     << "            as burial restraints for GAPF.\n"

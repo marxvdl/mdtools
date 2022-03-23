@@ -24,12 +24,50 @@
 #include <cassert>
 #include <algorithm>
 
+bool rcntr_atomComparator (Atom a, Atom b) {
+	return a.distanceToCenter < b.distanceToCenter;
+}
+
 /**
  * Generates the "rcntr" file.
  */
 void Protein::generateRcntr(int layers, bool quad, ostream& output, string referenceAtom){
 	int i = 1;
+
+	bool usingCustomLimits = false;
+	
+	// Join internal layers (v3, custom boundaries)
+	if(this->joinInternalLayers == 3){
+		if(this->customLimits == "")
+			throw "The --custom-limits options should be used with join-internal type 3";
 		
+		//Parse layer boundaries
+		layerBoundaries.clear();
+		layerBoundaries.push_back(0);
+
+		stringstream s_stream(this->customLimits);
+		while(s_stream.good()) {
+			string substr;
+			getline(s_stream, substr, ','); //get first string delimited by comma
+			layerBoundaries.push_back(string2real(substr));			
+		}
+
+		layers = layerBoundaries.size();
+
+		//Get the outermost boundary
+		Atom outerAtom = *max_element(atoms.begin(), atoms.end(), rcntr_atomComparator);
+		layerBoundaries.push_back(outerAtom.distanceToCenter);
+
+		//Calculate layer distances and deltas		
+		layerDistances.resize(layers);
+		layerDeltas.resize(layers);
+		for(int i=0; i<layers; i++){
+			layerDeltas[i] = (layerBoundaries[i+1] - layerBoundaries[i]) / 2.0;
+			layerDistances[i] = layerDeltas[i] + layerBoundaries[i];
+		}
+		usingCustomLimits = true;
+	}	
+	
 	if(layers == 0){
 		output << atoms.size() << " distances from center " << centerX << " " << centerY << " " << centerZ << endl;
 		output << "1.000 1.000 2000" << endl;
@@ -60,13 +98,16 @@ void Protein::generateRcntr(int layers, bool quad, ostream& output, string refer
 			
 	}
 	else{
-		calculateLayerInfo(layers);
+		if(!usingCustomLimits)
+			calculateLayerInfo(layers);
 
 		stringstream ss;
 		for(uint j=1; j<layerBoundaries.size(); j++)
 			ss << " " << layerBoundaries[j];
 
-		output << atoms.size() << " distances from center " << centerX << " " << centerY << " " << centerZ << "   |   boundaries:" << ss.str() << "  |  size: " << toLetter().size() << endl;
+		output << atoms.size() << " distances from center " << centerX << " " << centerY << " " << centerZ << 
+		"   |   boundaries:" << ss.str() << (usingCustomLimits? " (custom)" : "") <<
+		"  |  size: " << toLetter().size() << endl;
 		output << "1.000 1.000 2000" << endl;
 
 		for(vector<Atom>::iterator it = atoms.begin(); it != atoms.end(); ++it){
