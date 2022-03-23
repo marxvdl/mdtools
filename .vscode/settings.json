@@ -3,6 +3,12 @@
         "string": "cpp",
         "iostream": "cpp",
         "*.tcc": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "random": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "vector": "cpp",
+        "sstream": "cpp",
+        "iosfwd": "cpp"
     }
 }
